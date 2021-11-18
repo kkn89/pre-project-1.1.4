@@ -17,8 +17,8 @@ public class Util {
     public static Connection getConnection() throws SQLException {
         Connection connection;
         connection = DriverManager.getConnection(URL, USER, PASSWORD);
-
-
+        connection.setAutoCommit(false);
+        connection.commit();
         return connection;
 
     }

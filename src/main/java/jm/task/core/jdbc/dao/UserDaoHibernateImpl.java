@@ -16,7 +16,7 @@ import java.util.List;
 import static jm.task.core.jdbc.util.Util.getSessionFactory;
 
 public class UserDaoHibernateImpl implements UserDao {
-    private final Connection connection = Util.getConnection();
+
     private final SessionFactory sessionFactory = Util.getSessionFactory();
 
     Transaction transaction = null;
@@ -31,7 +31,6 @@ public class UserDaoHibernateImpl implements UserDao {
             session.createSQLQuery("CREATE TABLE IF NOT EXISTS users (id INT NOT NULL AUTO_INCREMENT, " +
                     "name VARCHAR (45), lastName VARCHAR(45), age TINYINT  NOT NULL, PRIMARY KEY (id))").executeUpdate();
             transaction.commit();
-            session.close();
             System.out.println("Таблица создана");
         } catch (Exception e) {
             if (transaction != null) {
@@ -43,11 +42,10 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void dropUsersTable() {
-        try (Session session = getSessionFactory().openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
             session.createSQLQuery("DROP TABLE IF EXISTS users").executeUpdate();
             transaction.commit();
-            session.close();
             System.out.println("Таблица удалена");
         } catch (Exception e) {
             if (transaction != null) {
@@ -94,7 +92,6 @@ public class UserDaoHibernateImpl implements UserDao {
             transaction = session.beginTransaction();
             userList = session.createQuery("FROM User ").list();
             transaction.commit();
-            //System.out.println("Пользователи получены :");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
